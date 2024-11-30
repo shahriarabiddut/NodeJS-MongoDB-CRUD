@@ -9,26 +9,70 @@ import {
 import AddCoffee from './components/AddCoffee.jsx';
 import UpdateCoffee from './components/UpdateCoffee.jsx';
 import HomeLayout from './Layouts/HomeLayout.jsx';
+import AuthLayout from './Layouts/AuthLayout.jsx';
+import SignIn from './pages/SignIn.jsx';
+import SignUp from './pages/SignUp.jsx';
+import AuthProvider from './provider/AuthProvider.jsx';
+import ErrorPage from './pages/ErrorPage.jsx';
+import PrivateLayout from './Layouts/PrivateLayout.jsx';
+import Users from './Layouts/Users.jsx';
 const router = createBrowserRouter([
   {
     path: "/",
     element: <HomeLayout><App/></HomeLayout>, // Here Need Children props
-    loader: ()=>fetch('http://localhost:5000/coffee'),
+    loader: ()=>fetch('https://progherocoffee.vercel.app/coffee'),
+    errorElement: <ErrorPage/>,
   },
   {
-    path: "/addCoffee",
-    element: <HomeLayout><AddCoffee/></HomeLayout> ,
+    path:'/auth',
+    element: <AuthLayout/>,
+    errorElement: <ErrorPage/>,
+    children:[
+        {
+            path:'/auth/',
+            element: <SignIn/>
+        },
+        {
+            path:'/auth/signin',
+            element: <SignIn/>
+        },{
+            path:'/auth/signup',
+            element: <SignUp/>
+        },
+
+    ]
+  },{
+    path:'/dashboard',
+    element: <PrivateLayout/>,
+    // errorElement: <ErrorPage/>,
+    children:[
+        {
+            path:'/dashboard/',
+            element: <Users/>,
+            loader: ()=>fetch('https://progherocoffee.vercel.app/users'),
+        },{
+          path: "/dashboard/addCoffee",
+          element: <AddCoffee/> ,
+        },
+        {
+          path: "/dashboard/updateCoffee/:id",
+          element: <UpdateCoffee/>,
+          loader: ({params})=>fetch(`https://progherocoffee.vercel.app/coffee/${params.id}`),
+        },
+
+    ]
   },
   {
-    path: "/updateCoffee/:id",
-    element: <HomeLayout><UpdateCoffee/></HomeLayout>,
-    loader: ({params})=>fetch(`http://localhost:5000/coffee/${params.id}`),
+      path:'*',
+      element: <ErrorPage/>
   },
-  
+    
 ]);
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
   </StrictMode>,
 )

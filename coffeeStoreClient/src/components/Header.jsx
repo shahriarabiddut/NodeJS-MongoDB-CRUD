@@ -1,10 +1,17 @@
-import React from 'react'
-import { NavLink } from 'react-router-dom'
+import React, { useContext } from 'react'
+import { Link, NavLink } from 'react-router-dom'
+import { AuthContext } from '../provider/AuthProvider'
 
 function Header() {
+  const {user,logOut} = useContext(AuthContext);
+  // console.log(user);
   const links = <>
         <li><NavLink to={'/'}>Home</NavLink></li>
-        <li><NavLink to={'/addCoffee'}>Add A Coffee</NavLink></li>
+        { !user && <li><NavLink to={'/auth/signin'}>SignIn</NavLink></li> }
+        { user && <>  <li><NavLink to={'/dashboard'}>Dashboard</NavLink></li>  
+        <li><NavLink to={'/dashboard/addCoffee'}>Add A Coffee</NavLink></li>
+                </>
+        }
                 </>
   return (
     <div className="navbar bg-base-100">
@@ -26,19 +33,28 @@ function Header() {
       </div>
       <ul
         tabIndex={0}
-        className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
+        className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow gap-2"
+        >
         {links}
       </ul>
     </div>
-    <a className="btn btn-ghost font-rancho text-3xl">Espresso Emporium</a>
+    <Link to={'/'} className="btn btn-ghost font-rancho text-3xl">Espresso Emporium</Link>
   </div>
   <div className="navbar-center hidden lg:flex">
-    <ul className="menu menu-horizontal px-1">
+    <ul className="menu menu-horizontal px-1 gap-2">
     {links}
     </ul>
   </div>
   <div className="navbar-end">
-    <a className="btn">Button</a>
+  {
+      user ? 
+      <div className="flex gap-1">
+        <a className="btn bg-[#d18a4b] text-white"> {user?.displayName} </a> 
+        <a className="btn" onClick={logOut}> Logout </a> 
+      </div>
+      : 
+      <NavLink to={`/auth/signin`} className="btn">Login</NavLink>
+    }
   </div>
 </div>
   )

@@ -17,7 +17,7 @@ function UpdateCoffee() {
     const details = form.details.value;
     const photo = form.photo.value;
     const updatedCoffee = {name,quantity,category,supplier,taste,chef,details,photo};
-    fetch(`http://localhost:5000/coffee/${_id}`,{
+    fetch(`https://progherocoffee.vercel.app/coffee/${_id}`,{
          method:'PUT',
          headers:{
             'content-type':'application/json'

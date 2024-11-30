@@ -1,7 +1,9 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Link, NavLink } from 'react-router-dom';
 import Swal from 'sweetalert2'
+import { AuthContext } from '../provider/AuthProvider';
 function Coffee({coffee,coffees,setCoffees}) {
+    const {user} = useContext(AuthContext);
     const {_id,name,photo,details,taste,supplier,quantity} = coffee;
     const handleDelete = (_id)=>{
         console.log(_id);
@@ -15,7 +17,7 @@ function Coffee({coffee,coffees,setCoffees}) {
             confirmButtonText: "Yes, delete it!"
           }).then((result) => {
             if (result.isConfirmed) {
-                fetch(`http://localhost:5000/coffee/${_id}`,{
+                fetch(`https://progherocoffee.vercel.app/coffee/${_id}`,{
                     method:'DELETE'
                 })
                 .then(res=>res.json())
@@ -59,9 +61,10 @@ function Coffee({coffee,coffees,setCoffees}) {
         </div>
           <div className="flex items-center justify-center lg:justify-end ">
             <div className="flex lg:flex-col md:flex-row gap-3">
-                <button className="btn btn-neutral">View</button>
-                <Link to={`/updateCoffee/${_id}`} className="btn btn-neutral" >Edit</Link>
-                <button className="btn btn-warning" onClick={()=>{handleDelete(_id)}} >X</button>
+                <button className="btn bg-[#d18a4b] text-white">View</button>
+              {user && <> <Link to={`/dashboard/updateCoffee/${_id}`} className="btn bg-[#d18a4b] text-white" >Edit</Link>
+                <button className="btn btn-warning" onClick={()=>{handleDelete(_id)}} >X</button> </>
+              }
             </div>
           </div>
     </div>
